@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zibidi Games — Indie Mobile Game Studio</title>
+<meta name="description" content="Zibidi Games is a small indie studio making bright, snackable mobile games: Scrap Runner and Tixly Rush.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zibidi Games">
+<meta property="og:description" content="Small studio. Big fun. Makers of Scrap Runner and Tixly Rush.">
+<meta property="og:image" content="https://zibidistudio.github.io/assets/img/logo-512.png">
+<meta property="og:url" content="https://zibidistudio.github.io/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* Taken straight from the logo */
+    --black:#000000;
+    --cream:#F4F5EF;
+    --ink:#0B0B0A;
+    --ink-2:#141412;
+    --line:rgba(244,245,239,.12);
+    --muted:rgba(244,245,239,.62);
+    --scrap:#F29A2E;
+    --tixly:#3D7BFF;
+    --radius:28px;
+    --wrap:1180px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  html,body{overflow-x:clip}
+  body{margin:0;background:var(--black);color:var(--cream);font:17px/1.6 "DM Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img,video{display:block;max-width:100%}
+  a{color:inherit}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+  h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;line-height:.95;margin:0;letter-spacing:-.02em}
+  .eyebrow{font:700 12px/1 "DM Sans",sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+
+  /* grain */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.06;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* nav */
+  .nav{position:fixed;top:0;left:0;right:0;z-index:50;transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+  .nav.scrolled{background:rgba(0,0,0,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-color:var(--line)}
+  .nav .wrap{display:flex;align-items:center;justify-content:space-between;height:72px}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:800 18px/1 "Bricolage Grotesque",sans-serif;letter-spacing:.04em}
+  .brand img{width:30px;height:auto}
+  .nav ul{display:flex;gap:6px;list-style:none;margin:0;padding:0}
+  .nav ul a{display:block;padding:9px 16px;border-radius:99px;text-decoration:none;font-weight:500;font-size:15px;color:var(--muted);transition:color .2s,background .2s}
+  .nav ul a:hover{color:var(--cream);background:rgba(244,245,239,.08)}
+  .nav ul a.cta{background:var(--cream);color:var(--black)}
+  .nav ul a.cta:hover{background:#fff}
+
+  /* hero */
+  .hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:110px 0 0}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:end;width:100%}
+  .hero h1{font-size:clamp(64px,11vw,168px);font-weight:800;text-transform:uppercase;line-height:.84}
+  .hero h1 .outline{color:transparent;-webkit-text-stroke:2px var(--cream)}
+  .hero .lead{max-width:470px;margin:28px 0 36px;font-size:19px;color:var(--muted)}
+  .hero .lead strong{color:var(--cream);font-weight:500}
+  .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;gap:10px;padding:16px 26px;border-radius:99px;font-weight:700;text-decoration:none;border:1.5px solid var(--cream);transition:transform .2s,background .2s,color .2s}
+  .btn:hover{transform:translateY(-2px)}
+  .btn.solid{background:var(--cream);color:var(--black)}
+  .btn.ghost:hover{background:var(--cream);color:var(--black)}
+  .hero-text{padding-bottom:12vh}
+  .meerkat-stage{position:relative;align-self:end;display:flex;justify-content:center;height:min(78vh,760px)}
+  .meerkat-stage .halo{position:absolute;bottom:-20%;width:120%;aspect-ratio:1;border-radius:50%;background:radial-gradient(closest-side,rgba(244,245,239,.13),rgba(244,245,239,0));}
+  .meerkat{position:relative;height:100%;width:auto;object-fit:contain;object-position:bottom;transform:translateY(100%);animation:popup 1.1s cubic-bezier(.2,1.3,.4,1) .25s forwards}
+  @keyframes popup{to{transform:translateY(0)}}
+  .hero .scroll{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:8px}
+  .hero .scroll i{width:1px;height:36px;background:linear-gradient(var(--cream),transparent);animation:drip 1.8s ease-in-out infinite}
+  @keyframes drip{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+  /* marquee */
+  .marquee{background:var(--cream);color:var(--black);overflow:hidden;padding:20px 0;transform:rotate(-1.6deg);margin:-10px -20px 0;position:relative;z-index:2}
+  .marquee .track{display:flex;width:max-content;animation:slide 28s linear infinite}
+  .marquee span{font:800 clamp(28px,4vw,46px)/1 "Bricolage Grotesque",sans-serif;text-transform:uppercase;padding:0 28px;white-space:nowrap;display:flex;align-items:center;gap:56px}
+  .marquee span::after{content:"";width:22px;height:22px;background:var(--black);border-radius:50%}
+  @keyframes slide{to{transform:translateX(-50%)}}
+
+  /* sections */
+  section{position:relative}
+  .section-head{padding:140px 0 64px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+  .section-head h2{font-size:clamp(48px,7vw,96px);font-weight:800;text-transform:uppercase}
+  .section-head p{max-width:380px;color:var(--muted);margin:0}
+
+  /* game */
+  .game{border-top:1px solid var(--line);padding:90px 0}
+  .game-grid{display:grid;grid-template-columns:auto 1fr;gap:72px;align-items:center}
+  .game.flip .game-grid{grid-template-columns:1fr auto}
+  .game.flip .phone-col{order:2}
+  .phone-col{display:flex;gap:18px;align-items:center}
+  .phone{position:relative;width:300px;aspect-ratio:9/16;border-radius:40px;padding:10px;background:#1b1b19;box-shadow:0 0 0 1.5px rgba(244,245,239,.18),0 40px 80px -30px var(--glow,rgba(0,0,0,.8));flex:none}
+  .phone video,.phone img{width:100%;height:100%;object-fit:cover;border-radius:31px;background:#111}
+  .thumbs{display:flex;flex-direction:column;gap:12px}
+  .thumb{width:78px;aspect-ratio:9/16;border-radius:14px;overflow:hidden;border:2px solid transparent;padding:0;cursor:pointer;background:none;opacity:.55;transition:opacity .2s,border-color .2s,transform .2s}
+  .thumb img{width:100%;height:100%;object-fit:cover}
+  .thumb:hover{opacity:.9;transform:scale(1.04)}
+  .thumb[aria-pressed="true"]{opacity:1;border-color:var(--accent)}
+  .game-info .num{font:800 15px/1 "Bricolage Grotesque",sans-serif;color:var(--accent);letter-spacing:.1em}
+  .game-info h3{font-size:clamp(56px,7.5vw,104px);font-weight:800;text-transform:uppercase;margin:14px 0 20px}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+  .tag{padding:7px 14px;border-radius:99px;border:1px solid var(--line);font-size:13px;font-weight:500;color:var(--muted)}
+  .game-info .desc{font-size:19px;color:var(--muted);max-width:520px;margin:0 0 30px}
+  .feats{list-style:none;padding:0;margin:0 0 38px;display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;max-width:560px}
+  .feats li{display:flex;gap:12px;align-items:flex-start;font-size:15.5px}
+  .feats li::before{content:"";flex:none;width:9px;height:9px;margin-top:8px;border-radius:2px;background:var(--accent);transform:rotate(45deg)}
+  .stores{display:flex;gap:12px;flex-wrap:wrap}
+  .store{display:inline-flex;align-items:center;gap:12px;padding:11px 20px 11px 16px;border-radius:16px;background:var(--cream);color:var(--black);text-decoration:none;transition:transform .2s}
+  .store:hover{transform:translateY(-2px)}
+  .store svg{width:26px;height:26px}
+  .store small{display:block;font-size:11px;line-height:1.1;opacity:.7}
+  .store b{display:block;font:700 17px/1.1 "Bricolage Grotesque",sans-serif}
+  .store.soon{background:transparent;color:var(--cream);border:1.5px dashed var(--line);cursor:default}
+  .store.soon:hover{transform:none}
+  .scrap{--accent:var(--scrap);--glow:rgba(242,154,46,.55)}
+  .tixly{--accent:var(--tixly);--glow:rgba(61,123,255,.6)}
+
+  /* clip strip */
+  .strip{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:72px}
+  .strip figure{margin:0;border-radius:22px;overflow:hidden;position:relative;aspect-ratio:9/14;background:#111}
+  .strip video{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+  .strip figure:hover video{transform:scale(1.04)}
+  .strip figcaption{position:absolute;left:14px;bottom:14px;padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);font-size:13px;font-weight:500}
+
+  /* studio */
+  .studio{background:var(--cream);color:var(--black);border-radius:var(--radius) var(--radius) 0 0;margin-top:80px;overflow:hidden}
+  .studio .wrap{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding-top:120px;padding-bottom:120px;align-items:center}
+  .studio h2{font-size:clamp(48px,6.5vw,88px);font-weight:800;text-transform:uppercase}
+  .studio .eyebrow{color:rgba(0,0,0,.55)}
+  .studio p{font-size:19px;color:rgba(0,0,0,.72);margin:24px 0 0;max-width:500px}
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:48px;border-top:1.5px solid var(--black)}
+  .stats div{padding:22px 0 0}
+  .stats b{display:block;font:800 clamp(40px,5vw,60px)/1 "Bricolage Grotesque",sans-serif}
+  .stats span{font-size:14px;color:rgba(0,0,0,.6)}
+  .badge{position:relative;aspect-ratio:1;border-radius:50%;background:var(--black);display:flex;align-items:flex-end;justify-content:center;overflow:hidden;max-width:520px;width:100%;justify-self:center}
+  .badge img{height:88%;width:auto}
+  .badge svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 30s linear infinite}
+  .badge text{font:800 15px "Bricolage Grotesque",sans-serif;letter-spacing:.32em;fill:var(--cream);text-transform:uppercase}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* contact */
+  .contact{background:var(--cream);color:var(--black);padding:0 0 100px}
+  .contact-card{background:var(--black);color:var(--cream);border-radius:var(--radius);padding:clamp(40px,7vw,90px);display:grid;grid-template-columns:1.3fr 1fr;gap:40px;align-items:end;position:relative;overflow:hidden}
+  .contact-card h2{font-size:clamp(46px,7vw,100px);font-weight:800;text-transform:uppercase}
+  .contact-card p{color:var(--muted);margin:22px 0 0;max-width:420px}
+  .mail{display:inline-block;font:700 clamp(17px,1.9vw,24px)/1.2 "Bricolage Grotesque",sans-serif;text-decoration:none;border-bottom:2px solid var(--cream);padding-bottom:6px;overflow-wrap:anywhere}
+  .mail:hover{opacity:.75}
+  .contact-side{display:flex;flex-direction:column;gap:22px;align-items:flex-start}
+
+  footer{background:var(--cream);color:var(--black);border-top:1.5px solid rgba(0,0,0,.12)}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding-top:28px;padding-bottom:28px;font-size:14px}
+  footer nav{display:flex;gap:22px;flex-wrap:wrap}
+  footer a{text-decoration:none;color:rgba(0,0,0,.65)}
+  footer a:hover{color:var(--black)}
+  .giant{font:800 clamp(80px,21vw,330px)/.8 "Bricolage Grotesque",sans-serif;text-transform:uppercase;text-align:center;letter-spacing:-.04em;background:var(--cream);color:var(--black);padding:20px 0 0;overflow:hidden;white-space:nowrap;user-select:none}
+
+  /* reveal */
+  .reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+
+  @media (max-width:980px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-text{padding-bottom:0;text-align:left}
+    .meerkat-stage{height:52vh;margin-top:20px}
+    .game-grid,.game.flip .game-grid{grid-template-columns:1fr;gap:48px}
+    .game.flip .phone-col{order:0}
+    .phone-col{justify-content:center}
+    .strip{grid-template-columns:repeat(2,1fr)}
+    .studio .wrap,.contact-card{grid-template-columns:1fr}
+    .badge{max-width:380px}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 16px}
+    .nav ul li:not(:last-child){display:none}
+    .phone{width:min(66vw,280px);border-radius:34px}
+    .phone video{border-radius:26px}
+    .thumb{width:58px;border-radius:10px}
+    .feats{grid-template-columns:1fr}
+    .section-head{padding:100px 0 40px}
+    .game{padding:64px 0}
+    .strip{gap:10px;margin-top:48px}
+    .hero h1 .outline{-webkit-text-stroke:1.5px var(--cream)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+    .meerkat{transform:none}
+    .reveal{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="assets/img/meerkat.png" alt="" width="30" height="59">ZIBIDI GAMES</a>
+    <ul>
+      <li><a href="#games">Games</a></li>
+      <li><a href="#studio">Studio</a></li>
+      <li><a class="cta" href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow">Indie mobile game studio</p>
+        <h1 style="margin-top:18px">Zibidi<br><span class="outline">Games</span></h1>
+        <p class="lead"><strong>Small studio, big fun.</strong> We make bright, snackable mobile games you can pick up in a second and can't put down for an hour.</p>
+        <div class="btns">
+          <a class="btn solid" href="#games">See our games
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
+          <a class="btn ghost" href="#contact">Say hello</a>
+        </div>
+      </div>
+      <div class="meerkat-stage" aria-hidden="true">
+        <div class="halo"></div>
+        <img class="meerkat" src="assets/img/meerkat.png" alt="" width="482" height="944">
+      </div>
+    </div>
+    <div class="scroll" aria-hidden="true">Scroll<i></i></div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Scrap Runner</span><span>Tixly Rush</span><span>Made with love</span><span>Zibidi Games</span>
+      <span>Scrap Runner</span><span>Tixly Rush</span><span>Made with love</span><span>Zibidi Games</span>
+    </div>
+  </div>
+
+  <section id="games">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Our<br>Games</h2>
+        <p>Two very different games, one shared rule: every second should feel good. Here's what we've been building.</p>
+      </div>
+    </div>
+
+    <!-- SCRAP RUNNER -->
+    <article class="game scrap" id="scrap-runner">
+      <div class="wrap">
+        <div class="game-grid">
+          <div class="phone-col reveal">
+            <div class="phone">
+              <video class="main-video" src="assets/video/scrap-lava.mp4" poster="assets/img/scrap-lava.webp" muted loop playsinline preload="metadata" aria-label="Scrap Runner gameplay"></video>
+            </div>
+            <div class="thumbs" role="group" aria-label="Scrap Runner clips">
+              <button class="thumb" aria-pressed="true" data-src="scrap-lava" aria-label="Lava level"><img src="assets/img/scrap-lava.webp" alt="" loading="lazy"></button>
+              <button class="thumb" aria-pressed="false" data-src="scrap-factory" aria-label="Factory level"><img src="assets/img/scrap-factory.webp" alt="" loading="lazy"></button>
+              <button class="thumb" aria-pressed="false" data-src="scrap-desert" aria-label="Desert level"><img src="assets/img/scrap-desert.webp" alt="" loading="lazy"></button>
+              <button class="thumb" aria-pressed="false" data-src="scrap-gates" aria-label="Number gates"><img src="assets/img/scrap-gates.webp" alt="" loading="lazy"></button>
+            </div>
+          </div>
+          <div class="game-info reveal">
+            <span class="num">01 — RUNNER</span>
+            <h3>Scrap<br>Runner</h3>
+            <div class="tags"><span class="tag">Hyper-casual</span><span class="tag">Runner</span><span class="tag">Upgrades</span><span class="tag">iOS &amp; Android</span></div>
+            <p class="desc">Sprint through a sun-baked junkyard as a scrappy little robot. Pick the right number gates, bolt on more parts, grow stronger and smash the giant machines waiting at the finish line.</p>
+            <ul class="feats">
+              <li>Choose +/– gates to power up your bot</li>
+              <li>Boss machines with saws, cannons &amp; fury</li>
+              <li>Junkyard, factory, desert, underwater &amp; lava worlds</li>
+              <li>Combos, magnets, shields &amp; turbo boosts</li>
+            </ul>
+            <div class="stores">
+              <a class="store" href="#" data-store="scrap-ios" aria-label="Scrap Runner on the App Store">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.59 1.1 8.75.73 1.05 1.6 2.24 2.73 2.2 1.1-.04 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.3-3.5zM14.19 6.15c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.67-.92 2.66.97.07 1.96-.49 2.56-1.21z"/></svg>
+                <span><small>Download on the</small><b>App Store</b></span></a>
+              <a class="store" href="#" data-store="scrap-android" aria-label="Scrap Runner on Google Play">
+                <svg viewBox="0 0 24 24"><path fill="#00D7FE" d="M3.6 2.3c-.3.3-.4.8-.4 1.4v16.6c0 .6.1 1.1.4 1.4l9.2-9.7z"/><path fill="#FFCE00" d="m16 15.2-3.2-3.2L16 8.8l3.8 2.2c1.1.6 1.1 1.6 0 2.2z"/><path fill="#FF3A44" d="M16 15.2 12.8 12l-9.2 9.7c.3.4.9.4 1.6 0z"/><path fill="#00F076" d="M16 8.8 5.2 2.3c-.7-.4-1.3-.3-1.6 0l9.2 9.7z"/></svg>
+                <span><small>Get it on</small><b>Google Play</b></span></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="strip">
+          <figure class="reveal"><video data-src="assets/video/scrap-junkyard.mp4" poster="assets/img/scrap-junkyard.webp" muted loop playsinline preload="none"></video><figcaption>The junkyard</figcaption></figure>
+          <figure class="reveal"><video data-src="assets/video/scrap-gates.mp4" poster="assets/img/scrap-gates.webp" muted loop playsinline preload="none"></video><figcaption>Pick your gate</figcaption></figure>
+          <figure class="reveal"><video data-src="assets/video/scrap-factory.mp4" poster="assets/img/scrap-factory.webp" muted loop playsinline preload="none"></video><figcaption>The factory</figcaption></figure>
+          <figure class="reveal"><video data-src="assets/video/scrap-desert.mp4" poster="assets/img/scrap-desert.webp" muted loop playsinline preload="none"></video><figcaption>Boss fights</figcaption></figure>
+        </div>
+      </div>
+    </article>
+
+    <!-- TIXLY RUSH -->
+    <article class="game tixly flip" id="tixly-rush">
+      <div class="wrap">
+        <div class="game-grid">
+          <div class="phone-col reveal">
+            <div class="thumbs" role="group" aria-label="Tixly Rush clips">
+              <button class="thumb" aria-pressed="true" data-src="tixly-board" aria-label="Big board match"><img src="assets/img/tixly-board.webp" alt="" loading="lazy"></button>
+              <button class="thumb" aria-pressed="false" data-src="tixly-play" aria-label="Quick level"><img src="assets/img/tixly-play.webp" alt="" loading="lazy"></button>
+              <button class="thumb" aria-pressed="false" data-src="tixly-store" aria-label="Themes and skins"><img src="assets/img/tixly-store.webp" alt="" loading="lazy"></button>
+            </div>
+            <div class="phone">
+              <video class="main-video" src="assets/video/tixly-board.mp4" poster="assets/img/tixly-board.webp" muted loop playsinline preload="metadata" aria-label="Tixly Rush gameplay"></video>
+            </div>
+          </div>
+          <div class="game-info reveal">
+            <span class="num">02 — PUZZLE</span>
+            <h3>Tixly<br>Rush</h3>
+            <div class="tags"><span class="tag">Puzzle</span><span class="tag">Tic-tac-toe</span><span class="tag">Brain teaser</span><span class="tag">iOS &amp; Android</span></div>
+            <p class="desc">The tic-tac-toe you know, turned into a race against the clock. Outsmart the bot on growing boards, line up your marks before the moves run out, and climb level after level of brain-teasing boards.</p>
+            <ul class="feats">
+              <li>Bigger boards, longer lines, sharper bots</li>
+              <li>Timer &amp; move limits keep every turn tense</li>
+              <li>Hints, undo &amp; restart when you need them</li>
+              <li>Unlock board themes &amp; X/O skins</li>
+            </ul>
+            <div class="stores">
+              <a class="store" href="#" data-store="tixly-ios" aria-label="Tixly Rush on the App Store">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.03-1.5-2.62-1.7-3.18-1.73-1.35-.14-2.64.8-3.33.8-.69 0-1.74-.78-2.87-.76-1.47.02-2.83.86-3.59 2.18-1.53 2.66-.39 6.59 1.1 8.75.73 1.05 1.6 2.24 2.73 2.2 1.1-.04 1.51-.71 2.84-.71 1.32 0 1.7.71 2.86.69 1.18-.02 1.93-1.07 2.65-2.13.84-1.22 1.18-2.4 1.2-2.46-.03-.01-2.3-.88-2.3-3.5zM14.19 6.15c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.54 1.31-.56.64-1.05 1.67-.92 2.66.97.07 1.96-.49 2.56-1.21z"/></svg>
+                <span><small>Download on the</small><b>App Store</b></span></a>
+              <a class="store" href="#" data-store="tixly-android" aria-label="Tixly Rush on Google Play">
+                <svg viewBox="0 0 24 24"><path fill="#00D7FE" d="M3.6 2.3c-.3.3-.4.8-.4 1.4v16.6c0 .6.1 1.1.4 1.4l9.2-9.7z"/><path fill="#FFCE00" d="m16 15.2-3.2-3.2L16 8.8l3.8 2.2c1.1.6 1.1 1.6 0 2.2z"/><path fill="#FF3A44" d="M16 15.2 12.8 12l-9.2 9.7c.3.4.9.4 1.6 0z"/><path fill="#00F076" d="M16 8.8 5.2 2.3c-.7-.4-1.3-.3-1.6 0l9.2 9.7z"/></svg>
+                <span><small>Get it on</small><b>Google Play</b></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="studio" id="studio">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="eyebrow">The studio</p>
+        <h2 style="margin-top:16px">Always on<br>the lookout</h2>
+        <p>Like our meerkat, we're small, curious and always scanning the horizon for the next fun idea. Zibidi Games is an independent studio crafting mobile games with clean controls, juicy feedback and that one-more-level feeling.</p>
+        <div class="stats">
+          <div><b>2</b><span>Games</span></div>
+          <div><b>300+</b><span>Levels built</span></div>
+          <div><b>100%</b><span>Indie</span></div>
+        </div>
+      </div>
+      <div class="badge reveal" aria-hidden="true">
+        <svg viewBox="0 0 400 400"><defs><path id="circ" d="M200,200 m-165,0 a165,165 0 1,1 330,0 a165,165 0 1,1 -330,0"/></defs>
+          <text><textPath href="#circ">Zibidi Games ✦ Small studio ✦ Big fun ✦ Zibidi Games ✦ Small studio ✦ Big fun ✦</textPath></text></svg>
+        <img src="assets/img/meerkat.png" alt="" loading="lazy" width="482" height="944">
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <div class="contact-card reveal">
+        <div>
+          <p class="eyebrow">Get in touch</p>
+          <h2 style="margin-top:16px">Let's<br>talk</h2>
+          <p>Press, partnerships, publishing, feedback or just want to say you beat level 75? Our inbox is open.</p>
+        </div>
+        <div class="contact-side">
+          <a class="mail" href="mailto:zibidigames.contact@gmail.com">zibidigames.contact@gmail.com</a>
+          <a class="btn solid" href="mailto:zibidigames.contact@gmail.com">Send an email
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="giant" aria-hidden="true">Zibidi</div>
+<footer>
+  <div class="wrap">
+    <span>© <span id="y">2026</span> Zibidi Games. All rights reserved.</span>
+    <nav>
+      <a href="tixly-rush-terms/">Tixly Rush Terms</a>
+      <a href="https://zibidistudio.github.io/tixly-rush-privacy/">Tixly Rush Privacy</a>
+      <a href="mailto:zibidigames.contact@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+
+  // nav background on scroll
+  const nav = document.getElementById('nav');
+  const onScroll = () => nav.classList.toggle('scrolled', scrollY > 30);
+  addEventListener('scroll', onScroll, {passive:true}); onScroll();
+
+  // reveal on scroll
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), {threshold:.08,rootMargin:"0px 0px -5% 0px"});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // play videos only while visible (saves battery & data)
+  const vio = new IntersectionObserver(es => es.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting) {
+      if (!v.src && v.dataset.src) v.src = v.dataset.src;
+      v.play().catch(()=>{});
+    } else v.pause();
+  }), {threshold:.25});
+  document.querySelectorAll('video').forEach(v => vio.observe(v));
+
+  // clip switcher
+  document.querySelectorAll('.phone-col').forEach(col => {
+    const v = col.querySelector('.main-video');
+    col.querySelectorAll('.thumb').forEach(b => b.addEventListener('click', () => {
+      col.querySelectorAll('.thumb').forEach(x => x.setAttribute('aria-pressed', x === b));
+      v.poster = 'assets/img/' + b.dataset.src + '.webp';
+      v.src = 'assets/video/' + b.dataset.src + '.mp4';
+      v.play().catch(()=>{});
+    }));
+  });
+
+  // store links not live yet: show "coming soon"
+  document.querySelectorAll('.store[href="#"]').forEach(a => {
+    a.classList.add('soon');
+    a.querySelector('small').textContent = 'Coming soon to';
+    a.removeAttribute('href');
+    a.setAttribute('aria-disabled', 'true');
+  });
+</script>
+</body>
+</html>
